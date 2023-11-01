@@ -1,5 +1,6 @@
 using System.Text.Json;
 using Cassandra;
+using CassandraChat.Messages;
 using CassandraChat.Rooms;
 using CassandraChat.Users;
 
@@ -31,6 +32,7 @@ app.MapGroup("/api/v1/users")
     .MapUsersApi(session);
 
 app.MapGroup("/api/v1/rooms")
-    .MapRoomsApi(session);
+    .MapRoomsApi(session)
+    .MapMessagesApi(session);
 
 app.Run();

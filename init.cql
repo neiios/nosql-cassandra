@@ -50,21 +50,25 @@ CREATE TABLE IF NOT EXISTS users_by_room
 CREATE TABLE IF NOT EXISTS messages_by_room
 (
     room_id     UUID,
-    message_id  TIMEUUID,
+    created_at  TIMESTAMP,
+    message_id  UUID,
+    sender_id   UUID,
     sender_name TEXT,
     content     TEXT,
     is_pinned   BOOLEAN,
-    PRIMARY KEY ((room_id), message_id)
-) WITH CLUSTERING ORDER BY (message_id DESC) AND DEFAULT_TIME_TO_LIVE = 31536000; -- 1 year
+    PRIMARY KEY ((room_id), created_at, message_id)
+) WITH CLUSTERING ORDER BY (created_at DESC, message_id DESC) AND DEFAULT_TIME_TO_LIVE = 31536000; -- 1 year
 
 CREATE INDEX IF NOT EXISTS ON messages_by_room (is_pinned);
 
-CREATE TABLE IF NOT EXISTS messages_by_room_and_user
+CREATE TABLE IF NOT EXISTS messages_by_room_and_sender
 (
     room_id     UUID,
-    user_id     UUID,
-    message_id  TIMEUUID,
+    sender_id   UUID,
+    created_at  TIMESTAMP,
+    message_id  UUID,
     sender_name TEXT,
     content     TEXT,
-    PRIMARY KEY ((room_id, user_id), message_id)
-) WITH CLUSTERING ORDER BY (message_id DESC) AND DEFAULT_TIME_TO_LIVE = 31536000; -- 1 year
+    is_pinned   BOOLEAN,
+    PRIMARY KEY ((room_id, sender_id), created_at, message_id)
+) WITH CLUSTERING ORDER BY (created_at DESC, message_id DESC) AND DEFAULT_TIME_TO_LIVE = 31536000; -- 1 year

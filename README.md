@@ -17,9 +17,9 @@ A text based chat application with rooms for multiple users.
 - [x] Show a list of users in a room
 - [x] Show the count of users in a room
 
-- Show last (or all) messages in a room
-- Send message to a room
-- Show messages of a specific user in a room
+- [x] Show last (or all) messages in a room
+- [x] Send message to a room
+- [x] Show messages of a specific user in a room
 
 ## Based links
 
