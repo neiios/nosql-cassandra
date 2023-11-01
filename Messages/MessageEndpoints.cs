@@ -108,6 +108,36 @@ public static class MessageEndpoints
             return Results.Ok(messages);
         });
 
+        app.MapPut("/{roomId:guid}/messages/{messageId:guid}", async
+            (Guid roomId, Guid messageId, MessageUpdateRequestDto dto) =>
+        {
+            var updatesMessageByRoom = new SimpleStatement(
+                "UPDATE messages_by_room SET content = ?, sender_name = ?" +
+                " WHERE room_id = ? AND created_at = ? AND message_id = ?",
+                dto.Content, dto.SenderName, roomId, dto.CreatedAt, messageId
+            );
+
+            var updateMessageByRoomAndSender = new SimpleStatement(
+                "UPDATE messages_by_room_and_sender SET content = ?, sender_name = ?" +
+                " WHERE room_id = ? AND sender_id = ? AND message_id = ? AND created_at = ?",
+                dto.Content, dto.SenderName, roomId, dto.SenderId, messageId, dto.CreatedAt
+            );
+
+            var batch = new BatchStatement()
+                .Add(updatesMessageByRoom)
+                .Add(updateMessageByRoomAndSender);
+
+            await session.ExecuteAsync(batch);
+
+            return Results.Ok(new
+            {
+                dto.SenderId,
+                dto.SenderName,
+                dto.Content,
+                dto.CreatedAt
+            });
+        });
+
         return app;
     }
 }
