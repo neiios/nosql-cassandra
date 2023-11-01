@@ -1,4 +1,5 @@
 using Cassandra;
+using Microsoft.AspNetCore.Mvc;
 using Isession = Cassandra.ISession;
 
 namespace CassandraChat.Messages;
@@ -136,6 +137,29 @@ public static class MessageEndpoints
                 dto.Content,
                 dto.CreatedAt
             });
+        });
+
+        app.MapDelete("/{roomId:guid}/messages/{messageId:guid}", async
+            (Guid roomId, Guid messageId, [FromBody] MessageDeleteRequestDto dto) =>
+        {
+            var deleteMessageByRoom = new SimpleStatement(
+                "DELETE FROM messages_by_room WHERE room_id = ? AND created_at = ? AND message_id = ?",
+                roomId, dto.CreatedAt, messageId
+            );
+
+            var deleteMessageByRoomAndSender = new SimpleStatement(
+                "DELETE FROM messages_by_room_and_sender " +
+                "WHERE room_id = ? AND sender_id = ? AND created_at = ? AND message_id = ?",
+                roomId, dto.SenderId, dto.CreatedAt, messageId
+            );
+
+            var batch = new BatchStatement()
+                .Add(deleteMessageByRoom)
+                .Add(deleteMessageByRoomAndSender);
+
+            await session.ExecuteAsync(batch);
+
+            return Results.NoContent();
         });
 
         return app;
