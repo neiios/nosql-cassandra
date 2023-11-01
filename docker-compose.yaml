@@ -1,0 +1,23 @@
+services:
+  cassandra-seed:
+    image: cassandra:4.1
+    ports:
+      - "9042:9042"
+    environment:
+      - "CASSANDRA_SEEDS=cassandra-seed"
+      - "CASSANDRA_CLUSTER_NAME=Bark"
+      - "CASSANDRA_DC=se1"
+      - "CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch"
+
+  cassandra1:
+    image: cassandra:4.1
+    ports:
+      - "9043:9042"
+    environment:
+      - "CASSANDRA_SEEDS=cassandra-seed"
+      - "CASSANDRA_CLUSTER_NAME=Bark"
+      - "CASSANDRA_DC=se1"
+      - "CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch"
+    depends_on:
+      - cassandra-seed
+

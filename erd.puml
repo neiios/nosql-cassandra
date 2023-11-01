@@ -1,0 +1,63 @@
+@startuml chat-erd
+
+skinparam linetype polyline
+
+entity "users" as u {
+    user_id : uuid <<K>>
+    email : text
+    username : text
+    created_at: timestamp
+}
+
+entity "users_by_email" as ue {
+    email : text <<K>>
+    password_hash : text
+    user_id : uuid
+}
+
+entity "rooms" as r {
+    room_id : uuid <<K>>
+    name : text
+    description : text
+    created_at: timestamp
+}
+
+entity "rooms_by_user" as ru {
+    user_id : uuid <<K>>
+    room_id : uuid <<C Desc>>
+    room_name : text
+    room_description : text
+}
+
+entity "users_by_room" as ur {
+    room_id : uuid <<K>>
+    joined_at : timestamp <<C Asc>>
+    user_id : uuid <<C Desc>>
+    user_display_name : text
+    roles : set<text>
+}
+
+entity "messages_by_room" as mr {
+    room_id : uuid <<K>>
+    message_id : timeuuid <<C Desc>>
+    sender_name: text
+    content : text
+    is_pinned : boolean <<Index>>
+}
+
+entity "messages_by_room_and_user" as mru {
+    room_id : uuid <<K>>
+    user_id : uuid <<K>>
+    message_id : timeuuid <<C Desc>>
+    sender_name: text
+    content : text
+}
+
+u }|..o{ r
+u ||..o{ ru
+u ||..|| ue
+r ||..o{ ur
+r ||..o{ mr
+r ||..o{ mru
+
+@enduml
