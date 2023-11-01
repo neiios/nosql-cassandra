@@ -52,10 +52,7 @@ public static class MessageEndpoints
             pageSize = pageSize is > 0 ? pageSize.Value : 100;
             var statement =
                 "SELECT message_id, created_at, content, sender_id, sender_name FROM messages_by_room WHERE room_id = ?";
-            if (seenCreatedAt.HasValue)
-            {
-                statement += " AND created_at < ?";
-            }
+            if (seenCreatedAt.HasValue) statement += " AND created_at < ?";
 
             statement += " LIMIT ?";
 
@@ -71,7 +68,7 @@ public static class MessageEndpoints
                 createAt = row.GetValue<DateTimeOffset>("created_at"),
                 content = row.GetValue<string>("content"),
                 senderId = row.GetValue<Guid>("sender_id"),
-                senderName = row.GetValue<string>("sender_name"),
+                senderName = row.GetValue<string>("sender_name")
             });
 
             return Results.Ok(messages);
@@ -85,10 +82,7 @@ public static class MessageEndpoints
                             SELECT message_id, created_at, sender_name, content FROM messages_by_room_and_sender
                             WHERE room_id = ? AND sender_id = ?
                             """;
-            if (seenCreatedAt.HasValue)
-            {
-                statement += " AND created_at < ?";
-            }
+            if (seenCreatedAt.HasValue) statement += " AND created_at < ?";
 
             statement += " LIMIT ?";
 
@@ -103,7 +97,7 @@ public static class MessageEndpoints
                 messageId = row.GetValue<Guid>("message_id"),
                 createAt = row.GetValue<DateTimeOffset>("created_at"),
                 content = row.GetValue<string>("content"),
-                senderName = row.GetValue<string>("sender_name"),
+                senderName = row.GetValue<string>("sender_name")
             });
 
             return Results.Ok(messages);

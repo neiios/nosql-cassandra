@@ -53,10 +53,7 @@ public static class RoomEndpoints
             pageSize = pageSize is > 0 ? pageSize.Value : 5;
             var statement =
                 "SELECT user_id, user_display_name, joined_at, roles FROM users_by_room WHERE room_id = ?";
-            if (seenJoinedAt.HasValue)
-            {
-                statement += " AND joined_at > ?";
-            }
+            if (seenJoinedAt.HasValue) statement += " AND joined_at > ?";
 
             statement += " LIMIT ?;";
 
@@ -86,10 +83,7 @@ public static class RoomEndpoints
 
             var row = await session.ExecuteAsync(statement);
             var room = row.FirstOrDefault();
-            if (room == null)
-            {
-                return Results.NotFound();
-            }
+            if (room == null) return Results.NotFound();
 
             return Results.Ok(new
             {
