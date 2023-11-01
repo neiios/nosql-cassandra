@@ -6,23 +6,20 @@ A text based chat application with rooms for multiple users.
 
 ## Queries
 
-- Register
-- Login
-- Show user information
+- [x] Register
+- [x] Login
+- [x] Show user information by id
+- [x] Show the list of rooms a user is in
 
-- Show a list of rooms huh
-
-- Show room information
-- Create room
-
-- Join room
+- [x] Show room information
+- [x] Create room
+- [x] Join room
+- [x] Show a list of users in a room
+- [x] Show the count of users in a room
 
 - Show last (or all) messages in a room
 - Send message to a room
 - Show messages of a specific user in a room
-
-- Show a list of users in a room
-- Show the count of users in a room
 
 ## Based links
 

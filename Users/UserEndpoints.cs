@@ -40,7 +40,7 @@ public static class UserEndpoints
                 return Results.NotFound();
             }
 
-            var userResponse = new UserResponseDto
+            var userResponse = new
             {
                 UserId = user.GetValue<Guid>("user_id"),
                 Email = user.GetValue<string>("email"),
@@ -82,16 +82,14 @@ public static class UserEndpoints
                 return Results.Conflict(new { message = "failed to create user" });
             }
 
-            var createdUser = new UserResponseDto
+            return Results.Created($"/api/v1/users/{userId}", new
             {
-                UserId = userId,
-                Email = dto.Email,
-                Username = dto.Username
-            };
-            return Results.Created($"/api/v1/users/{userId}", createdUser);
+                userId,
+                dto.Email,
+                dto.Username
+            });
         });
 
-        // NOTE: should be authorized
         app.MapGet("/{userId:guid}", async (ILogger<Program> log, Guid userId) =>
         {
             var statement = new SimpleStatement(
@@ -106,13 +104,32 @@ public static class UserEndpoints
                 return Results.NotFound();
             }
 
-            var userResponse = new UserResponseDto
+            return Results.Ok(new
             {
                 UserId = user.GetValue<Guid>("user_id"),
                 Email = user.GetValue<string>("email"),
                 Username = user.GetValue<string>("username")
-            };
-            return Results.Ok(userResponse);
+            });
+        });
+
+        app.MapGet("/{userId:guid}/rooms", async (ILogger<Program> log, Guid userId) =>
+        {
+            var selectRoomsByUserStatement = new SimpleStatement(
+                "SELECT room_id, room_name, room_description FROM rooms_by_user WHERE user_id = ?;",
+                userId
+            );
+
+            var roomsByUser = await session.ExecuteAsync(selectRoomsByUserStatement);
+            log.LogInformation("get rooms for user {userId}", userId);
+
+            var rooms = roomsByUser.Select(row => new
+            {
+                RoomId = row.GetValue<Guid>("room_id"),
+                Name = row.GetValue<string>("room_name"),
+                Description = row.GetValue<string>("room_description")
+            });
+
+            return Results.Ok(rooms);
         });
 
         return app;
