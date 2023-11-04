@@ -1,23 +1,33 @@
-services:
-  cassandra-seed:
-    image: cassandra:4.1
-    ports:
-      - "9042:9042"
-    environment:
-      - "CASSANDRA_SEEDS=cassandra-seed"
-      - "CASSANDRA_CLUSTER_NAME=Bark"
-      - "CASSANDRA_DC=se1"
-      - "CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch"
+# hope you have enough ram to run this
 
+services:
   cassandra1:
     image: cassandra:4.1
+    container_name: nosql-cassandra1
     ports:
-      - "9043:9042"
+      - 9042:9042
     environment:
-      - "CASSANDRA_SEEDS=cassandra-seed"
-      - "CASSANDRA_CLUSTER_NAME=Bark"
-      - "CASSANDRA_DC=se1"
-      - "CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch"
-    depends_on:
-      - cassandra-seed
+      - CASSANDRA_SEEDS=nosql-cassandra1,nosql-cassandra2,nosql-cassandra3
+    networks:
+      - cassandra-network
 
+  cassandra2:
+    image: cassandra:4.1
+    container_name: nosql-cassandra2
+    environment:
+      - CASSANDRA_SEEDS=nosql-cassandra1,nosql-cassandra2,nosql-cassandra3
+    networks:
+      - cassandra-network
+
+  cassandra3:
+    image: cassandra:4.1
+    container_name: nosql-cassandra3
+    environment:
+      - CASSANDRA_SEEDS=nosql-cassandra1,nosql-cassandra2,nosql-cassandra3
+    networks:
+      - cassandra-network
+
+networks:
+  cassandra-network:
+    name: noqsl-cassandra-network
+    driver: bridge
