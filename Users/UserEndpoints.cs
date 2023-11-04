@@ -10,7 +10,7 @@ public static class UserEndpoints
         app.MapPost("/login", async (ILogger<Program> log, UserCreateRequestDto dto) =>
         {
             var statement = new SimpleStatement(
-                "SELECT password_hash FROM users_by_email WHERE email = ?",
+                "SELECT password_hash, user_id FROM users_by_email WHERE email = ?",
                 dto.Email
             );
             var row = await session.ExecuteAsync(statement);
@@ -28,8 +28,9 @@ public static class UserEndpoints
                 return Results.Unauthorized();
             }
 
+            var userId = user.GetValue<Guid>("user_id");
             statement = new SimpleStatement(
-                "SELECT user_id, email, username FROM users WHERE email = ?",
+                "SELECT email, username FROM users WHERE user_id = ?",
                 dto.Email
             );
             row = await session.ExecuteAsync(statement);
@@ -42,7 +43,7 @@ public static class UserEndpoints
 
             var userResponse = new
             {
-                UserId = user.GetValue<Guid>("user_id"),
+                UserId = userId,
                 Email = user.GetValue<string>("email"),
                 Username = user.GetValue<string>("username")
             };

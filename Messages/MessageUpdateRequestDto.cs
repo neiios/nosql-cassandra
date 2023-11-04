@@ -8,4 +8,5 @@ public class MessageUpdateRequestDto
     [Required] public Guid SenderId { get; set; }
     public required string SenderName { get; set; }
     public required string Content { get; set; }
+    [Required] public bool IsPinned { get; set; }
 }

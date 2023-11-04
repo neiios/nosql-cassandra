@@ -12,6 +12,7 @@
 
 .idea
 .vscode
+*.png
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
