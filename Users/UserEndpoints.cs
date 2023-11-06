@@ -31,13 +31,13 @@ public static class UserEndpoints
             var userId = user.GetValue<Guid>("user_id");
             statement = new SimpleStatement(
                 "SELECT email, username FROM users WHERE user_id = ?",
-                dto.Email
+                userId
             );
             row = await session.ExecuteAsync(statement);
             user = row.FirstOrDefault();
             if (user == null)
             {
-                log.LogInformation("user {email} not found", dto.Email);
+                log.LogInformation("user id {email} not found", dto.Email);
                 return Results.NotFound();
             }
 
